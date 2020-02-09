@@ -1,4 +1,4 @@
-#一个甲基化芯片信号值矩阵差异分析的标准代码
+# 一个甲基化芯片信号值矩阵差异分析的标准代码
 
 本来呢，我的GitHub已经有一个GEO项目了，上面罗列了我大量的表达矩阵数据分析代码，理论上这个甲基化芯片信号值矩阵差异分析也是属于GEO公共数据库挖掘。
 
@@ -17,12 +17,12 @@
 看这个代码，你肯定是会R语言的，下面几个R包，安装起来，至少四五个小时哈
 
 ```r
-# 
+#
 # 中间肯定会报错，自己机智一点哦
 BiocManager::install("minfi",ask = F,update = F)
 BiocManager::install("ChAMP",ask = F,update = F)
-BiocManager::install("methylationArrayAnalysis",ask = F,update = F) 
-BiocManager::install("wateRmelon",ask = F,update = F) 
+BiocManager::install("methylationArrayAnalysis",ask = F,update = F)
+BiocManager::install("wateRmelon",ask = F,update = F)
 
 ```
 
@@ -43,7 +43,7 @@ info=read.table("group.txt",sep="\t",header=T)
 library(data.table)
 # 如果你的甲基化信号矩阵，自己在Excel表格里面整理好。
 # 就走下面的fread流程
-a=fread("data.txt",data.table = F ) 
+a=fread("data.txt",data.table = F )
 a[1:4,1:4]
 rownames(a)=a[,1]
 a=a[,-1]
@@ -65,21 +65,21 @@ save(myLoad,file = 'step1-output.Rdata')
 如果是GEOquery 流程，取决于你自己的需求哈，代码是：
 
 ```r
-# 如果你使用GEO数据库下载甲基化信号值矩阵文件 
+# 如果你使用GEO数据库下载甲基化信号值矩阵文件
 # 下面的代码你也需要理解哦。
 if(F){
   require(GEOquery)
   require(Biobase)
   eset <- getGEO("GSE68777",destdir = './',AnnotGPL = T,getGPL = F)
-  beta.m <- exprs(eset[[1]]) 
-  ## 顺便把临床信息制作一下，下面的代码，具体每一个项目都是需要修改的哦 
+  beta.m <- exprs(eset[[1]])
+  ## 顺便把临床信息制作一下，下面的代码，具体每一个项目都是需要修改的哦
   pD.all <- pData(eset[[1]])
   pD <- pD.all[, c("title", "geo_accession", "characteristics_ch1.1", "characteristics_ch1.2")]
   head(pD)
   names(pD)[c(3,4)] <- c("group", "sex")
   pD$group <- sub("^diagnosis: ", "", pD$group)
-  pD$sex <- sub("^Sex: ", "", pD$sex) 
-  
+  pD$sex <- sub("^Sex: ", "", pD$sex)
+
   library(ChAMP)
   # beta 信号值矩阵里面不能有NA值
   myLoad=champ.filter(beta = beta.m ,pd = pD)
@@ -98,13 +98,13 @@ if(F){
 
 我们的代码：[step2-check-betaM.R](./step2-check-betaM.R) 很齐全啦，有生信技能树独创的3张图，如下：
 
-![矩阵质控3张图](README.assets/image-20200209165000753.png)
+![矩阵质控3张图](http://www.bio-info-trainee.com/wp-content/uploads/2020/02/image-20200209165000753.png)
 
 可以很明显从PCA图看的两个分组的样本还是相距足够远，生物学分组的意义是合理的，但是呢，选取top1000的sd的探针，可以看到其中一个样本被混入到不属于它的组别里面了，这个问题，在样本相关性矩阵热图里面也可以得到反映！
 
 也有一个过气的质量控制图表：
 
-![甲基化信号值分布](README.assets/image-20200209165118102.png)
+![甲基化信号值分布](http://www.bio-info-trainee.com/wp-content/uploads/2020/02/image-20200209165118102.png)
 
 这个主要是看2个组的6个样本的甲基化信号值分布情况，通常不看这个，有统计学基础的朋友很容易看得到啦！
 
@@ -116,7 +116,7 @@ if(F){
 load(file = 'step1-output.Rdata')
 myLoad  # 存储了甲基化信号矩阵和表型信息。
 myNorm <- champ.norm(beta=myLoad$beta,arraytype="450K",cores=5)
-dim(myNorm) 
+dim(myNorm)
 group_list=myLoad$pd$Group
 table(group_list)
 myDMP <- champ.DMP(beta = myNorm,pheno=group_list)
@@ -151,13 +151,13 @@ length(intersect(rownames(dmpDiff),rownames(champDiff)))
 
 进行一系列差异分析结果可视化，火山图，MA图， 热图等等。如下：
 
-![火山图，MA图， 热图](README.assets/image-20200209170426665.png)
+![火山图，MA图， 热图](http://www.bio-info-trainee.com/wp-content/uploads/2020/02/image-20200209170426665.png)
 
 ### step5：GO或者KEGG等数据库的功能注释
 
 因为champ流程拿到的差异分析结果里面的甲基化探针，自动会注释到了基因，所以容易进行GO或者KEGG等数据库的功能注释。
 
-![GO或者KEGG等数据库的功能注释](README.assets/image-20200209171335429.png)
+![GO或者KEGG等数据库的功能注释](http://www.bio-info-trainee.com/wp-content/uploads/2020/02/image-20200209171335429.png)
 
 其实还可以进行甲基化位点的分类，因为位于基因组不同功能区域的甲基化探针信号值代表的生物学意义不一样，包括5’ UTR, first exon, gene body, 3’ UTR, CpG island, CpG shore, CpG shelf，这些注释，都是在厂商提供注释文件信息里面。所以差异分析拿到的高甲基化或者低甲基化位点就可以分类。同理，champ也自动注释啦。
 
