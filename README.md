@@ -47,7 +47,7 @@ a=fread("data.txt",data.table = F )
 a[1:4,1:4]
 rownames(a)=a[,1]
 a=a[,-1]
-beta=as.betarix(a)
+beta=as.matrix(a)
 beta=impute.knn(beta)
 betaData=beta$data
 betaData=betaData+0.00001
