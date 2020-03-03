@@ -28,6 +28,8 @@ library("impute")
 
 info=read.table("group.txt",sep="\t",header=T)
 library(data.table)
+b=info
+rownames(b)=b[,1]
 # 如果你的甲基化信号矩阵，自己在Excel表格里面整理好。
 # 就走下面的fread流程
 a=fread("data.txt",data.table = F )
@@ -41,6 +43,7 @@ betaData=betaData+0.00001
 a=betaData
 a[1:4,1:4]
 identical(colnames(a),rownames(b))
+# 一定要保证，甲基化信号值矩阵，和表型信息，是一一对应的
 
 library(ChAMP)
 # beta 信号值矩阵里面不能有NA值

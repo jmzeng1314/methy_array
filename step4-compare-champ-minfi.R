@@ -24,6 +24,7 @@ beta.m=myLoad$beta
 # 后续针对 beta.m 进行差异分析, 比如 minfi 包
 grset=makeGenomicRatioSetFromMatrix(beta.m,what="Beta")
 M = getM(grset)
+group_list=myLoad$pd$Group
 # 因为甲基化芯片是450K或者850K，几十万行的甲基化位点，统计检验通常很慢。
 dmp <- dmpFinder(M, pheno=group_list, type="categorical")
 dmpDiff=dmp[(dmp$qval<0.05) & (is.na(dmp$qval)==F),]

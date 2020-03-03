@@ -36,7 +36,7 @@ BiocManager::install("wateRmelon",ask = F,update = F)
 
 BiocManager::install(c("GSEABase","GSVA","clusterProfiler" ),ask = F,update = F)
 BiocManager::install(c("GEOquery","limma","impute" ),ask = F,update = F)
-BiocManager::install(c("genefu","org.Hs.eg.db","hgu133plus2.db" ),ask = F,update = F)
+BiocManager::install(c("org.Hs.eg.db","hgu133plus2.db" ),ask = F,update = F)
 
 
 # source("https://bioconductor.org/biocLite.R") 
@@ -56,7 +56,6 @@ library("factoextra")
 library(GSEABase)
 library(GSVA)
 library(clusterProfiler)
-library(genefu)
 library(ggplot2)
 library(ggpubr)
 library(hgu133plus2.db)

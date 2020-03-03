@@ -24,12 +24,14 @@ load(file = 'step1-output.Rdata')
 myLoad  
 myNorm <- champ.norm(beta=myLoad$beta,arraytype="450K",cores=5)
 dim(myNorm) 
+pD=myLoad$pd
 save(myNorm,pD,file = 'step2-champ_myNorm.Rdata')
 
+load(file = 'step2-champ_myNorm.Rdata')
 # 原来的450K经过质控过滤后是400K啦
 beta.m=myNorm
 dim(beta.m) 
-# 下面是表达矩阵标准3张图质量控制手段，生信技能树远程
+# 下面是表达矩阵标准3张图质量控制手段，生信技能树原创
 if(T){
   
   

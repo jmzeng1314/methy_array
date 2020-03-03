@@ -25,7 +25,8 @@ load(file = 'step3-output-myDMP.Rdata')
 deg=myDMP[[1]]
 head(deg)
 length(unique(deg$gene)) 
-deg$g=ifelse(deg$logFC>0,'UP','DOWN')
+deg$g=ifelse(abs(deg$logFC) < 0.2,'stable',
+             ifelse(deg$logFC > 0.2,'UP','DOWN'))
 table(deg$g)
 head(deg)
 deg$symbol=deg$gene
