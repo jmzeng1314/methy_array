@@ -28,7 +28,7 @@ myDMP <- champ.DMP(beta = myNorm,pheno=group_list)
 head(myDMP[[1]])
 save(myDMP,file = 'step3-output-myDMP.Rdata')
 # 还可以调动交互式界面修改阈值，调整差异化探针
-DMP.GUI(DMP=myDMP[[1]],beta=myNorm,group_list)
+# DMP.GUI(DMP=myDMP[[1]],beta=myNorm,group_list)
 
 # 下面的分析, 非常的消耗计算资源
 # 如果你有时间，就折腾

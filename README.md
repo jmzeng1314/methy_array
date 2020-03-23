@@ -1,6 +1,6 @@
 # 一个甲基化芯片信号值矩阵差异分析的标准代码
 
-本来呢，我的GitHub已经有一个GEO项目了，上面罗列了我大量的表达矩阵数据分析代码，理论上这个甲基化芯片信号值矩阵差异分析也是属于GEO公共数据库挖掘。
+> 本来呢，我的GitHub已经有一个GEO项目了，上面罗列了我大量的表达矩阵数据分析代码，理论上这个甲基化芯片信号值矩阵差异分析也是属于GEO公共数据库挖掘。
 
 但是呢，甲基化芯片信号值矩阵差异分析里面的代码细节有点多，不同于以前我们分享的普通表达矩阵数据分析，还是值得重新开一个项目来描述它。背景知识大家需要自行查看我在生信技能树的推文哦，介绍在：[甲基化的一些基础知识](https://mp.weixin.qq.com/s/-E50Jvzo8aNqVgvEB0nVGA)，也了解了[甲基化芯片的一般分析流程 ](https://mp.weixin.qq.com/s/JHrL_DqgQY6Yh18vHySKYg) 。
 
@@ -39,8 +39,23 @@ BiocManager::install("wateRmelon",ask = F,update = F)
 这里举例的  group.txt 和 data.txt 是自己截图的6个甲基化芯片数据，2个分组，方便走差异分析流程。任何一个GEO的数据集，都可以自行这里  group.txt 和 data.txt 文件，我们的 [step1-load-betaM.R](./step1-load-betaM.R) 代码很齐全啦：
 
 ```r
+rm(list = ls())
+options(stringsAsFactors = F)
+
+require(GEOquery)
+require(Biobase)
+library("impute")
+
+# 这里举例的  group.txt 和 data.txt 是自己截图的6个甲基化芯片数据，2个分组
+# 方便走差异分析流程。
+
+# 任何一个GEO的数据集，都可以自行这里  group.txt 和 data.txt 文件
+# 或者走后面的 GEOquery 流程，取决于你自己的需求哈
+
 info=read.table("group.txt",sep="\t",header=T)
 library(data.table)
+b=info
+rownames(b)=b[,1]
 # 如果你的甲基化信号矩阵，自己在Excel表格里面整理好。
 # 就走下面的fread流程
 a=fread("data.txt",data.table = F )
@@ -54,12 +69,14 @@ betaData=betaData+0.00001
 a=betaData
 a[1:4,1:4]
 identical(colnames(a),rownames(b))
+# 一定要保证，甲基化信号值矩阵，和表型信息，是一一对应的
 
 library(ChAMP)
 # beta 信号值矩阵里面不能有NA值
 myLoad=champ.filter(beta = a,pd = b)
 myLoad
 save(myLoad,file = 'step1-output.Rdata')
+
 ```
 
 如果是GEOquery 流程，取决于你自己的需求哈，代码是：
@@ -168,3 +185,9 @@ length(intersect(rownames(dmpDiff),rownames(champDiff)))
 ### step7: 一些个性化分析
 
 这个代码就很自由了。
+
+
+
+### 交流群
+
+查看 https://mp.weixin.qq.com/s/UbN8PONb07HD4hEhJ-GzXw 即可，有专门的拉群小助手
